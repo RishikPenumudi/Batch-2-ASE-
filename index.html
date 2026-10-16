@@ -1,0 +1,774 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <style>
+    :root {
+      --green: #137a43;
+      --deep: #075b31;
+      --bg: #f3f7f5;
+      --text: #17231c;
+      --muted: #647168;
+      --border: #dbe5de;
+      --red: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      font: 15px/1.45 Arial, sans-serif;
+      color: var(--text);
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    button {
+      cursor: pointer;
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 15px;
+      background: var(--green);
+      color: white;
+      font-weight: 700;
+    }
+
+    button:hover { background: var(--deep); }
+    button.secondary { background: #e7f2eb; color: var(--deep); }
+    button.danger { background: #b42318; }
+    button.small { padding: 7px 10px; font-size: 13px; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #cbd8ce;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    textarea { min-height: 80px; resize: vertical; }
+    .hidden { display: none !important; }
+
+    .wrap { max-width: 1250px; margin: auto; padding: 22px; }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .brand h1 { margin: 0; color: var(--deep); font-size: 27px; }
+    .brand p { margin: 4px 0; color: var(--muted); }
+    .top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 14px #183c2410;
+    }
+
+    .panel h2 { margin: 0 0 15px; color: var(--deep); font-size: 21px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field { min-width: 0; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 16px;
+    }
+
+    .metric .label { font-size: 13px; color: var(--muted); }
+    .metric .value { font-size: 27px; font-weight: 800; margin-top: 7px; color: var(--deep); }
+    .metric .unit { font-size: 12px; color: var(--muted); }
+
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tabs button { background: #e2eee6; color: var(--deep); }
+    .tabs button.active { background: var(--green); color: white; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .msg { padding: 10px 12px; border-radius: 8px; margin: 10px 0; }
+    .msg.error { background: #fff0ef; color: var(--red); }
+    .msg.ok { background: #e8f6ed; color: var(--deep); }
+    .msg.info { background: #fff6db; color: #754f00; }
+
+    .table-wrap { overflow: auto; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 650px; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); font-size: 14px; }
+    th { background: #f4f8f5; color: #33483a; }
+
+    .muted { color: var(--muted); }
+    .row-actions { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+    .row-actions .field { flex: 1; min-width: 160px; }
+
+    .chart { width: 100%; min-height: 300px; }
+    .two-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+    .pill {
+      display: inline-block;
+      border-radius: 99px;
+      background: #e6f4ea;
+      color: #17643a;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .login-shell { max-width: 480px; margin: 7vh auto; padding: 20px; }
+    .login-shell .panel { padding: 28px; }
+    .login-shell h1 { color: var(--deep); margin: 0 0 8px; }
+    .login-shell .field { margin: 13px 0; }
+    .subtle { font-size: 12px; color: var(--muted); }
+
+    .alert-item {
+      border-left: 4px solid #d97706;
+      background: #fffaf0;
+      padding: 12px;
+      margin: 9px 0;
+      border-radius: 6px;
+    }
+
+    .footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px; }
+
+    @media(max-width:950px) {
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .two-charts { grid-template-columns: 1fr; }
+    }
+
+    @media(max-width:580px) {
+      .wrap { padding: 12px; }
+      .grid, .grid2, .cards { grid-template-columns: 1fr 1fr; }
+      .metric .value { font-size: 23px; }
+      .panel { padding: 14px; }
+      .brand h1 { font-size: 22px; }
+    }
+
+    @media(max-width:400px) {
+      .grid, .grid2, .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN AND STUDENT REGISTRATION -->
+<div id="loginView" class="login-shell">
+  <div class="panel">
+    <h1>🍃 Hostel Food Waste Monitor</h1>
+    <p class="muted">Sign in to manage meals, feedback and waste analytics.</p>
+
+    <div class="tabs">
+      <button id="loginTab" class="active" onclick="showAuth('login')">Sign in</button>
+      <button id="registerTab" class="secondary" onclick="showAuth('register')">Register student</button>
+    </div>
+
+    <div id="loginForm">
+      <div class="field">
+        <label>Username</label>
+        <input id="loginUsername" autocomplete="username" placeholder="Enter username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="loginPassword" type="password" autocomplete="current-password"
+          placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button style="width:100%" onclick="doLogin()">Sign in</button>
+    </div>
+
+    <div id="registerForm" class="hidden">
+      <div class="field">
+        <label>New username</label>
+        <input id="registerUsername" autocomplete="username" placeholder="3–30 characters">
+      </div>
+      <div class="field">
+        <label>Password (minimum 8 characters)</label>
+        <input id="registerPassword" type="password" autocomplete="new-password">
+      </div>
+      <button style="width:100%" onclick="doRegister()">Create student account</button>
+    </div>
+
+    <div id="authMessage"></div>
+    <p class="subtle">Initial demonstration administrator: ASE / 2026. Change this password after signing in. Student registration cannot create staff or administrator accounts.</p>
+  </div>
+</div>
+
+<!-- MAIN APPLICATION -->
+<div id="appView" class="wrap hidden">
+  <header class="top">
+    <div class="brand">
+      <h1 id="hostelTitle">🍃 Hostel Food Waste Monitoring System</h1>
+      <p>Measure waste. Improve planning. Feed people responsibly.</p>
+    </div>
+    <div class="top-actions">
+      <span id="userBadge" class="pill"></span>
+      <button class="secondary" onclick="refreshData()">↻ Refresh</button>
+      <button class="secondary" onclick="changePasswordUI()">Change password</button>
+      <button class="danger" onclick="doLogout()">Sign out</button>
+    </div>
+  </header>
+
+  <div id="globalMessage"></div>
+
+  <div class="cards">
+    <div class="metric"><div class="label">Food prepared</div><div id="mPrepared" class="value">0</div><div class="unit">kg</div></div>
+    <div class="metric"><div class="label">Food consumed</div><div id="mConsumed" class="value">0</div><div class="unit">kg</div></div>
+    <div class="metric"><div class="label">Food wasted</div><div id="mWaste" class="value">0</div><div class="unit">kg</div></div>
+    <div class="metric"><div class="label">Waste percentage</div><div id="mPercent" class="value">0%</div><div class="unit">Target shown in settings</div></div>
+    <div class="metric"><div class="label">Estimated waste cost</div><div id="mCost" class="value">₹0</div><div class="unit">INR</div></div>
+  </div>
+
+  <nav class="tabs" id="mainTabs">
+    <button class="active" data-tab="overview" onclick="showSection('overview',this)">📊 Dashboard</button>
+    <button data-tab="meals" data-roles="Admin,Staff" onclick="showSection('meals',this)">🍽️ Meal entry</button>
+    <button data-tab="feedback" onclick="showSection('feedback',this)">👨‍🎓 Feedback</button>
+    <button data-tab="analytics" onclick="showSection('analytics',this)">📉 Analytics</button>
+    <button data-tab="prediction" onclick="showSection('prediction',this)">🤖 Prediction</button>
+    <button data-tab="reports" data-roles="Admin,Staff" onclick="showSection('reports',this)">📄 Reports</button>
+    <button data-tab="alerts" data-roles="Admin,Staff" onclick="showSection('alerts',this)">🔔 Alerts</button>
+    <button data-tab="admin" data-roles="Admin" onclick="showSection('admin',this)">⚙️ Admin</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <section id="section-overview" class="section active">
+    <div class="grid2">
+      <div class="panel">
+        <h2>Current status</h2>
+        <p id="statusText">Loading dashboard…</p>
+        <p id="highestMeal" class="muted"></p>
+        <p id="ratingText" class="muted"></p>
+      </div>
+      <div class="panel">
+        <h2>Waste alerts</h2>
+        <div id="overviewAlerts"><p class="muted">Loading alerts…</p></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Recent food records</h2>
+      <div id="recentTable" class="table-wrap"></div>
+    </div>
+  </section>
+
+  <!-- MEAL ENTRY -->
+  <section id="section-meals" class="section">
+    <div class="panel">
+      <h2>Record food prepared and consumed</h2>
+      <div class="grid">
+        <div class="field"><label>Date</label><input id="foodDate" type="date"></div>
+        <div class="field"><label>Meal</label>
+          <select id="foodMeal">
+            <option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snacks</option>
+          </select>
+        </div>
+        <div class="field"><label>Prepared (kg)</label><input id="foodPrepared" type="number" min="0.1" step="0.1" value="50"></div>
+        <div class="field"><label>Consumed (kg)</label><input id="foodConsumed" type="number" min="0" step="0.1" value="45"></div>
+        <div class="field"><label>Students served</label><input id="foodStudents" type="number" min="0" step="1" value="50"></div>
+        <div class="field"><label>Cost per kg (₹)</label><input id="foodCost" type="number" min="0" step="0.01" value="60"></div>
+      </div>
+      <p class="subtle">Waste and estimated waste cost are calculated automatically.</p>
+      <button onclick="saveFood()">Save food record</button>
+      <div id="foodMessage"></div>
+    </div>
+  </section>
+
+  <!-- FEEDBACK -->
+  <section id="section-feedback" class="section">
+    <div class="panel">
+      <h2>Student meal feedback</h2>
+      <p class="muted">Rate a meal and suggest improvements.</p>
+      <div class="grid2">
+        <div class="field">
+          <label>Meal</label>
+          <select id="feedbackMeal"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snacks</option></select>
+        </div>
+        <div class="field">
+          <label>Rating</label>
+          <select id="feedbackRating">
+            <option value="5">5 — Excellent</option><option value="4">4 — Good</option>
+            <option value="3">3 — Average</option><option value="2">2 — Poor</option><option value="1">1 — Very poor</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin:12px 0">
+        <label>Comments / suggestions</label>
+        <textarea id="feedbackComments" maxlength="1000" placeholder="Share portion, taste, quality, or menu suggestions…"></textarea>
+      </div>
+      <button onclick="saveFeedback()">Submit feedback</button>
+      <div id="feedbackMessage"></div>
+    </div>
+  </section>
+
+  <!-- ANALYTICS -->
+  <section id="section-analytics" class="section">
+    <div class="panel">
+      <h2>Waste analytics</h2>
+      <p id="analyticsSummary" class="muted"></p>
+      <div class="two-charts">
+        <div id="mealChart" class="chart"></div>
+        <div id="preparedChart" class="chart"></div>
+      </div>
+      <div id="dailyChart" class="chart"></div>
+      <div id="mealBreakdown" class="table-wrap"></div>
+    </div>
+  </section>
+
+  <!-- PREDICTION -->
+  <section id="section-prediction" class="section">
+    <div class="panel">
+      <h2>Food demand prediction</h2>
+      <p class="muted">Historical estimate based on recently consumed quantities. It is a planning aid, not a guarantee.</p>
+      <div class="row-actions">
+        <div class="field">
+          <label>Meal to estimate</label>
+          <select id="predictionMeal"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snacks</option></select>
+        </div>
+        <button onclick="runPrediction()">Estimate demand</button>
+      </div>
+      <div id="predictionResult" style="margin-top:15px"></div>
+    </div>
+  </section>
+
+  <!-- CSV REPORTS -->
+  <section id="section-reports" class="section">
+    <div class="panel">
+      <h2>Download reports</h2>
+      <p class="muted">CSV reports contain food records for the selected date, week, or month.</p>
+      <div class="grid2">
+        <div class="field"><label>Daily report date</label><input id="dailyReportDate" type="date"></div>
+        <div class="field"><label>Weekly report: choose any date in the week</label><input id="weeklyReportDate" type="date"></div>
+        <div class="field"><label>Monthly report</label><input id="monthlyReportDate" type="month"></div>
+      </div>
+      <div class="row-actions" style="margin-top:15px">
+        <button onclick="downloadReport('daily')">Download daily CSV</button>
+        <button onclick="downloadReport('weekly')">Download weekly CSV</button>
+        <button onclick="downloadReport('monthly')">Download monthly CSV</button>
+      </div>
+      <div id="reportMessage"></div>
+    </div>
+  </section>
+
+  <!-- ALERTS -->
+  <section id="section-alerts" class="section">
+    <div class="panel">
+      <h2>Waste alerts log</h2>
+      <p class="muted">Alerts are raised when an individual meal's waste percentage exceeds the configured target.</p>
+      <button class="secondary" onclick="loadAlertLog()">Refresh alerts</button>
+      <div id="alertLog" class="table-wrap" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="section-admin" class="section">
+    <div class="panel">
+      <h2>Hostel settings</h2>
+      <div class="grid2">
+        <div class="field"><label>Hostel name</label><input id="settingHostel"></div>
+        <div class="field"><label>Waste target (%)</label><input id="settingTarget" type="number" min="0" max="100" step="0.1"></div>
+        <div class="field"><label>Currency label</label><input id="settingCurrency" value="INR"></div>
+        <div class="field"><label>Alert email (optional)</label><input id="settingEmail" type="email" placeholder="staff@example.com"></div>
+      </div>
+      <button style="margin-top:12px" onclick="saveSettings()">Save settings</button>
+      <div id="settingsMessage"></div>
+    </div>
+    <div class="panel">
+      <h2>User and role management</h2>
+      <p class="muted">New registrations are Students. Admins can promote verified users or deactivate accounts.</p>
+      <div id="usersTable" class="table-wrap"></div>
+    </div>
+  </section>
+
+  <div class="footer">Hostel Food Waste Monitoring System · College project prototype</div>
+</div>
+
+<script>
+  google.charts.load('current', {packages:['corechart','bar']});
+
+  let sessionToken = localStorage.getItem('hostelSessionToken') || '';
+  let appData = null;
+  const $ = id => document.getElementById(id);
+
+  const today = () => {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  };
+
+  $('foodDate').value = today();
+  $('dailyReportDate').value = today();
+  $('weeklyReportDate').value = today();
+  $('monthlyReportDate').value = today().slice(0,7);
+
+  function callServer(fn, args, success, failure) {
+    const runner = google.script.run
+      .withSuccessHandler(success || (()=>{}))
+      .withFailureHandler(err => {
+        const msg = err && err.message ? err.message : String(err);
+        if (/session expired|sign in again|inactive/i.test(msg)) {
+          sessionToken = '';
+          localStorage.removeItem('hostelSessionToken');
+          showLogin();
+        }
+        if (failure) failure(msg);
+        else showMessage('globalMessage', msg, 'error');
+      });
+    runner[fn].apply(runner, args);
+  }
+
+  function showMessage(id, msg, type) {
+    const el = $(id);
+    if (el) el.innerHTML = '<div class="msg '+(type||'info')+'">'+escapeHtml(msg)+'</div>';
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+    }[c]));
+  }
+
+  function showAuth(which) {
+    $('loginForm').classList.toggle('hidden', which !== 'login');
+    $('registerForm').classList.toggle('hidden', which !== 'register');
+    $('loginTab').classList.toggle('active', which === 'login');
+    $('registerTab').classList.toggle('active', which === 'register');
+    $('authMessage').innerHTML = '';
+  }
+
+  function showLogin() {
+    $('appView').classList.add('hidden');
+    $('loginView').classList.remove('hidden');
+  }
+
+  function doLogin() {
+    const username = $('loginUsername').value.trim();
+    const password = $('loginPassword').value;
+    callServer('login', [{username, password}], r => {
+      sessionToken = r.token;
+      localStorage.setItem('hostelSessionToken', sessionToken);
+      $('loginPassword').value = '';
+      $('loginView').classList.add('hidden');
+      $('appView').classList.remove('hidden');
+      refreshData();
+    }, m => showMessage('authMessage', m, 'error'));
+  }
+
+  function doRegister() {
+    const username = $('registerUsername').value.trim();
+    const password = $('registerPassword').value;
+    callServer('registerUser', [{username, password}], r => {
+      showMessage('authMessage', r.message, 'ok');
+      showAuth('login');
+      $('loginUsername').value = username;
+    }, m => showMessage('authMessage', m, 'error'));
+  }
+
+  function doLogout() {
+    callServer('logout', [sessionToken], () => {});
+    sessionToken = '';
+    localStorage.removeItem('hostelSessionToken');
+    showLogin();
+  }
+
+  function changePasswordUI() {
+    const oldP = prompt('Current password:');
+    if (oldP === null) return;
+    const newP = prompt('New password (at least 8 characters):');
+    if (newP === null) return;
+    callServer('changePassword', [sessionToken, oldP, newP],
+      r => showMessage('globalMessage', r.message, 'ok'));
+  }
+
+  function showSection(name, button) {
+    $('section-'+name).classList.add('active');
+    document.querySelectorAll('.section').forEach(s => {
+      if (s.id !== 'section-'+name) s.classList.remove('active');
+    });
+    document.querySelectorAll('#mainTabs button').forEach(b => {
+      b.classList.toggle('active', b === button);
+    });
+    if (name === 'analytics') drawCharts();
+    if (name === 'alerts') loadAlertLog();
+  }
+
+  function applyRole(role) {
+    document.querySelectorAll('[data-roles]').forEach(el => {
+      el.classList.toggle('hidden', !el.dataset.roles.split(',').includes(role));
+    });
+  }
+
+  function refreshData() {
+    if (!sessionToken) { showLogin(); return; }
+    callServer('getAppData', [sessionToken], data => {
+      appData = data;
+      renderDashboard();
+      applyRole(data.user.role);
+      $('userBadge').textContent = data.user.username+' · '+data.user.role;
+      $('hostelTitle').textContent = '🍃 '+data.settings.hostelName+' Food Waste Monitoring System';
+      $('settingHostel').value = data.settings.hostelName;
+      $('settingTarget').value = data.settings.wasteTargetPercent;
+      $('settingCurrency').value = data.settings.currency;
+      renderUsers();
+      if ($('section-analytics').classList.contains('active')) drawCharts();
+    }, m => showMessage('globalMessage', m, 'error'));
+  }
+
+  function renderDashboard() {
+    if (!appData) return;
+    const t = appData.totals;
+    $('mPrepared').textContent = t.prepared.toFixed(1);
+    $('mConsumed').textContent = t.consumed.toFixed(1);
+    $('mWaste').textContent = t.waste.toFixed(1);
+    $('mPercent').textContent = t.wastePercent.toFixed(1)+'%';
+    $('mCost').textContent = '₹'+t.wasteCost.toLocaleString('en-IN', {maximumFractionDigits:2});
+    $('statusText').textContent = t.records+' food records across '+appData.dailyTotals.length+' recorded dates. Waste target: '+appData.settings.wasteTargetPercent+'%.';
+    $('highestMeal').textContent = appData.highestWasteMeal
+      ? 'Highest total waste: '+appData.highestWasteMeal.meal+' ('+appData.highestWasteMeal.waste+' kg).'
+      : 'No meal records yet.';
+    $('ratingText').textContent = 'Average student rating: '+appData.feedback.averageRating+'/5 ('+appData.feedback.total+' ratings).';
+    $('overviewAlerts').innerHTML = appData.alerts.length
+      ? appData.alerts.slice(0,5).map(a=>'<div class="alert-item">'+escapeHtml(a.message)+'</div>').join('')
+      : '<p class="msg ok">No meal records currently exceed the waste target.</p>';
+    $('recentTable').innerHTML = tableHtml(
+      ['Date','Meal','Prepared kg','Consumed kg','Waste kg','Students','Waste cost'],
+      appData.recentRecords.map(r=>[r.date,r.meal,r.prepared,r.consumed,r.waste,r.students,'₹'+r.wasteCost])
+    );
+    $('analyticsSummary').textContent = 'Analytics covers '+appData.mealTotals.length+' meal categories across '+appData.dailyTotals.length+' recorded dates.';
+  }
+
+  function tableHtml(headers, rows) {
+    if (!rows.length) return '<p class="muted">No records yet.</p>';
+    return '<table><thead><tr>'+headers.map(h=>'<th>'+escapeHtml(h)+'</th>').join('')+
+      '</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(v=>'<td>'+escapeHtml(v)+'</td>').join('')+'</tr>').join('')+
+      '</tbody></table>';
+  }
+
+  function saveFood() {
+    const payload = {
+      date:$('foodDate').value,
+      meal:$('foodMeal').value,
+      prepared:$('foodPrepared').value,
+      consumed:$('foodConsumed').value,
+      students:$('foodStudents').value,
+      costPerKg:$('foodCost').value
+    };
+    callServer('addFoodRecord', [sessionToken,payload], r => {
+      showMessage('foodMessage', r.message+' Waste: '+r.waste+' kg.', 'ok');
+      refreshData();
+    }, m => showMessage('foodMessage', m, 'error'));
+  }
+
+  function saveFeedback() {
+    const payload = {
+      meal:$('feedbackMeal').value,
+      rating:$('feedbackRating').value,
+      comments:$('feedbackComments').value
+    };
+    callServer('addFeedback', [sessionToken,payload], r => {
+      showMessage('feedbackMessage', r.message, 'ok');
+      $('feedbackComments').value = '';
+      refreshData();
+    }, m => showMessage('feedbackMessage', m, 'error'));
+  }
+
+  function drawCharts() {
+    if (!appData || !google.visualization) return;
+    const meal = appData.mealTotals.filter(m=>m.waste>0);
+
+    if (meal.length) {
+      const dt = new google.visualization.DataTable();
+      dt.addColumn('string','Meal');
+      dt.addColumn('number','Waste (kg)');
+      dt.addRows(meal.map(m=>[m.meal,m.waste]));
+      new google.visualization.PieChart($('mealChart')).draw(dt,{
+        title:'Waste distribution by meal',
+        pieHole:0.35,
+        legend:{position:'right'},
+        chartArea:{width:'90%',height:'80%'}
+      });
+    } else {
+      $('mealChart').innerHTML = '<p class="muted">Add food records to see meal waste.</p>';
+    }
+
+    if (appData.mealTotals.length) {
+      const dt = new google.visualization.DataTable();
+      dt.addColumn('string','Meal');
+      dt.addColumn('number','Prepared kg');
+      dt.addColumn('number','Consumed kg');
+      dt.addRows(appData.mealTotals.map(m=>[m.meal,m.prepared,m.consumed]));
+      new google.visualization.ColumnChart($('preparedChart')).draw(dt,{
+        title:'Prepared vs consumed',
+        legend:{position:'bottom'},
+        bars:'vertical',
+        chartArea:{width:'80%',height:'70%'}
+      });
+    } else {
+      $('preparedChart').innerHTML = '';
+    }
+
+    if (appData.dailyTotals.length) {
+      const dt = new google.visualization.DataTable();
+      dt.addColumn('string','Date');
+      dt.addColumn('number','Waste kg');
+      dt.addRows(appData.dailyTotals.map(d=>[d.date,d.waste]));
+      new google.visualization.LineChart($('dailyChart')).draw(dt,{
+        title:'Daily food waste trend',
+        legend:{position:'none'},
+        curveType:'function',
+        chartArea:{width:'85%',height:'70%'}
+      });
+    } else {
+      $('dailyChart').innerHTML = '<p class="muted">Daily trend will appear after food records are added.</p>';
+    }
+
+    $('mealBreakdown').innerHTML = '<h3>Meal breakdown</h3>'+tableHtml(
+      ['Meal','Prepared kg','Consumed kg','Waste kg','Waste %','Waste cost'],
+      appData.mealTotals.map(m=>[
+        m.meal,m.prepared,m.consumed,m.waste,m.prepared ? (m.waste/m.prepared*100).toFixed(1)+'%' : '0%','₹'+m.cost
+      ])
+    );
+  }
+
+  function runPrediction() {
+    callServer('predictDemand', [sessionToken,$('predictionMeal').value], r => {
+      $('predictionResult').innerHTML =
+        '<div class="metric"><div class="label">Suggested demand estimate · '+escapeHtml(r.meal)+'</div>'+
+        '<div class="value">'+escapeHtml(r.predictedKg)+' kg</div>'+
+        '<p>'+escapeHtml(r.confidence)+' · Based on '+escapeHtml(r.sampleDays)+' recent records.</p>'+
+        '<p class="muted">'+escapeHtml(r.note)+'</p></div>';
+    }, m => showMessage('predictionResult',m,'error'));
+  }
+
+  function downloadReport(period) {
+    const value = period === 'daily' ? $('dailyReportDate').value
+      : period === 'weekly' ? $('weeklyReportDate').value
+      : $('monthlyReportDate').value;
+
+    if (!value) {
+      showMessage('reportMessage','Choose a date or month first.','error');
+      return;
+    }
+
+    callServer('getCSVReport', [sessionToken,period,value], r => {
+      const blob = new Blob([r.csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = r.filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showMessage('reportMessage','Downloaded '+r.filename+' ('+r.count+' records).','ok');
+    }, m => showMessage('reportMessage',m,'error'));
+  }
+
+  function saveSettings() {
+    const p = {
+      Hostel_Name:$('settingHostel').value.trim(),
+      Waste_Target_Percent:$('settingTarget').value,
+      Currency:$('settingCurrency').value.trim(),
+      Alert_Email:$('settingEmail').value.trim()
+    };
+    callServer('updateSettings', [sessionToken,p], r => {
+      showMessage('settingsMessage',r.message,'ok');
+      refreshData();
+    }, m => showMessage('settingsMessage',m,'error'));
+  }
+
+  function renderUsers() {
+    if (!appData || appData.user.role !== 'Admin') return;
+    const users = appData.users || [];
+    if (!users.length) {
+      $('usersTable').innerHTML = '<p class="muted">No users.</p>';
+      return;
+    }
+
+    $('usersTable').innerHTML =
+      '<table><thead><tr><th>Username</th><th>Role</th><th>Active</th><th>Created</th><th>Save changes</th></tr></thead><tbody>'+
+      users.map(u => {
+        const id = safeId(u.username);
+        return '<tr><td>'+escapeHtml(u.username)+'</td><td><select id="role_'+id+'">'+
+          '<option '+(u.role==='Student'?'selected':'')+'>Student</option>'+
+          '<option '+(u.role==='Staff'?'selected':'')+'>Staff</option>'+
+          '<option '+(u.role==='Admin'?'selected':'')+'>Admin</option>'+
+          '</select></td><td><input style="width:auto" type="checkbox" id="active_'+id+'" '+(u.active?'checked':'')+'></td>'+
+          '<td>'+escapeHtml(u.createdAt)+'</td><td><button class="small" onclick="updateUser('+JSON.stringify(u.username)+')">Update</button></td></tr>';
+      }).join('')+'</tbody></table>';
+  }
+
+  function safeId(s) {
+    return String(s).replace(/[^a-zA-Z0-9_-]/g,'_');
+  }
+
+  function updateUser(username) {
+    callServer('adminUpdateUser', [
+      sessionToken,
+      username,
+      $('role_'+safeId(username)).value,
+      $('active_'+safeId(username)).checked
+    ], r => {
+      showMessage('globalMessage',r.message,'ok');
+      refreshData();
+    }, m => showMessage('globalMessage',m,'error'));
+  }
+
+  function loadAlertLog() {
+    callServer('getAlertLog', [sessionToken], rows => {
+      $('alertLog').innerHTML = tableHtml(
+        ['Time','Date','Meal','Waste kg','Waste %','Message','Status'],
+        rows.map(r=>[r.timestamp,r.date,r.meal,r.waste,r.percent+'%',r.message,r.status])
+      );
+    }, m => showMessage('alertLog',m,'error'));
+  }
+
+  google.charts.setOnLoadCallback(() => {
+    if (appData && $('section-analytics').classList.contains('active')) drawCharts();
+  });
+
+  if (sessionToken) {
+    $('loginView').classList.add('hidden');
+    $('appView').classList.remove('hidden');
+    refreshData();
+  } else {
+    showLogin();
+  }
+</script>
+</body>
+</html>
